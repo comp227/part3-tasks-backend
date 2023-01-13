@@ -30,6 +30,12 @@ app.get('/api/tasks', (request, response) => {
     response.json(tasks)
 })
 
+app.get('/api/tasks/:id', (request, response) => {
+    const id = request.params.id
+    const task = tasks.find(task => task.id === id)
+    response.json(task)
+})
+
 const PORT = 3001
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
