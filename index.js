@@ -32,7 +32,9 @@ app.get('/api/tasks', (request, response) => {
 
 app.get('/api/tasks/:id', (request, response) => {
     const id = request.params.id
+    console.log('id =', id)
     const task = tasks.find(task => task.id === id)
+    console.log('task =', task)
     response.json(task)
 })
 
