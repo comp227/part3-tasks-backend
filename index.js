@@ -1,6 +1,8 @@
 const express = require('express')
 const app = express()
 
+app.use(express.json())
+
 let tasks = [
     {
         id: 1,
@@ -38,6 +40,13 @@ app.get('/api/tasks/:id', (request, response) => {
     } else {
         response.status(404).end()
     }
+})
+
+app.post('/api/tasks', (request, response) => {
+    const task = request.body
+    console.log('task =', task)
+
+    response.json(task)
 })
 
 app.delete('/api/tasks/:id', (request, response) => {
