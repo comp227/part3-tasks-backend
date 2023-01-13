@@ -43,8 +43,14 @@ app.get('/api/tasks/:id', (request, response) => {
 })
 
 app.post('/api/tasks', (request, response) => {
+    const maxId = tasks.length > 0
+        ? Math.max(...tasks.map(t => t.id))
+        : 0
+
     const task = request.body
-    console.log('task =', task)
+    task.id = maxId + 1
+
+    tasks = tasks.concat(task)
 
     response.json(task)
 })
