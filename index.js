@@ -33,7 +33,11 @@ app.get('/api/tasks', (request, response) => {
 app.get('/api/tasks/:id', (request, response) => {
     const id = Number(request.params.id)
     const task = tasks.find(task => task.id === id);
-    response.json(task)
+    if (task) {
+        response.json(task)
+    } else {
+        response.status(404).end()
+    }
 })
 
 const PORT = 3001
