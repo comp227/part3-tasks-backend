@@ -42,13 +42,28 @@ app.get('/api/tasks/:id', (request, response) => {
     }
 })
 
-app.post('/api/tasks', (request, response) => {
+const generateId = () => {
     const maxId = tasks.length > 0
         ? Math.max(...tasks.map(t => t.id))
         : 0
+    return maxId + 1
+}
 
-    const task = request.body
-    task.id = maxId + 1
+app.post('/api/tasks', (request, response) => {
+    const body = request.body
+
+    if (!body.content) {
+        return response.status(400).json({
+            error: 'content missing'
+        })
+    }
+
+    const task = {
+        id: generateId(),
+        content: body.content,
+        important: body.important || false,
+        date: new Date().toISOString(),
+    }
 
     tasks = tasks.concat(task)
 
