@@ -31,15 +31,8 @@ app.get('/api/tasks', (request, response) => {
 })
 
 app.get('/api/tasks/:id', (request, response) => {
-    const id = request.params.id
-    const task = tasks.find(task => {
-        console.log('task.id =', task.id)
-        console.log('typeof task.id =', typeof task.id)
-        console.log('id =', id)
-        console.log('typeof id =', typeof id)
-        console.log('task.id === id =', task.id === id, "\n")
-        return task.id === id;
-    });
+    const id = Number(request.params.id)
+    const task = tasks.find(task => task.id === id);
     response.json(task)
 })
 
