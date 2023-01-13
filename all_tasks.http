@@ -1,1 +1,10 @@
 GET http://localhost:3001/api/tasks
+
+###
+POST http://localhost:3001/api/tasks/
+content-type: application/json
+
+{
+  "content": "Investigate the WebStorm REST client further",
+  "important": false
+}
