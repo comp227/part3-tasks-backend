@@ -8,7 +8,7 @@
     "dev": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:ui": "rm -rf build && cd ../part2-tasks/ && npm run build && cp -r build ../part3-tasks-backend",
-    "deploy": "npm run build:ui && git add . && git commit -m uibuild && git push"
+    "deploy": "npm run build:ui && git add . && git commit -m ran_npm_deploy && git push"
   },
   "repository": {
     "type": "git",
