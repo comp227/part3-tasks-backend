@@ -23,16 +23,15 @@ mongoose
     .then((result) => {
         console.log('connected')
 
-        const task = new Task({
-            content: 'Practice coding interview problems',
-            date: new Date(),
-            important: true,
+        Task.find({}).then(result => {
+            result.forEach(task => {
+                console.log(task)
+            })
+            mongoose.connection.close()
         })
-
-        return task.save()
     })
-    .then(() => {
-        console.log('task saved!')
-        return mongoose.connection.close()
-    })
+    // .then(() => {
+    //     console.log('task saved!')
+    //     return mongoose.connection.close()
+    // })
     .catch((err) => console.log(err))
