@@ -49,13 +49,9 @@ app.get('/api/tasks', (request, response) => {
 })
 
 app.get('/api/tasks/:id', (request, response) => {
-    const id = Number(request.params.id)
-    const task = tasks.find(task => task.id === id);
-    if (task) {
+    Task.findById(request.params.id).then(task => {
         response.json(task)
-    } else {
-        response.status(404).end()
-    }
+    })
 })
 
 const generateId = () => {
