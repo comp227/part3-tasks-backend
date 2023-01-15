@@ -74,16 +74,15 @@ app.post('/api/tasks', (request, response) => {
         })
     }
 
-    const task = {
-        id: generateId(),
+    const task = new Task({
         content: body.content,
         important: body.important || false,
-        date: new Date().toISOString(),
-    }
+        date: new Date(),
+    })
 
-    tasks = tasks.concat(task)
-
-    response.json(task)
+    task.save().then(savedTask => {
+        response.json(savedTask)
+    })
 })
 
 app.delete('/api/tasks/:id', (request, response) => {
