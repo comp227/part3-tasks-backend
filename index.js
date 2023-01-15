@@ -60,6 +60,21 @@ app.post('/api/tasks', (request, response) => {
     })
 })
 
+app.put('/api/tasks/:id', (request, response, next) => {
+    const body = request.body
+
+    const task = {
+        content: body.content,
+        important: body.important,
+    }
+
+    Task.findByIdAndUpdate(request.params.id, task, { new: true })
+        .then(updatedTask => {
+            response.json(updatedTask)
+        })
+        .catch(error => next(error))
+})
+
 app.delete('/api/tasks/:id', (request, response, next) => {
     Task.findByIdAndRemove(request.params.id)
         .then(result => {
