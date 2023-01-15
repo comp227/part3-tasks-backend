@@ -57,14 +57,13 @@ app.post('/api/tasks', (request, response, next) => {
 })
 
 app.put('/api/tasks/:id', (request, response, next) => {
-    const body = request.body
+    const { content, important } = request.body
 
-    const task = {
-        content: body.content,
-        important: body.important,
-    }
-
-    Task.findByIdAndUpdate(request.params.id, task, { new: true })
+    Task.findByIdAndUpdate(
+        request.params.id,
+        { content, important },
+        { new: true, runValidators: true, context: 'query' }
+    )
         .then(updatedTask => {
             response.json(updatedTask)
         })
