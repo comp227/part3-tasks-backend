@@ -88,11 +88,12 @@ app.post('/api/tasks', (request, response) => {
     })
 })
 
-app.delete('/api/tasks/:id', (request, response) => {
-    const id = Number(request.params.id)
-    tasks = tasks.filter(task => task.id !== id)
-
-    response.status(204).end()
+app.delete('/api/tasks/:id', (request, response, next) => {
+    Task.findByIdAndRemove(request.params.id)
+        .then(result => {
+            response.status(204).end()
+        })
+        .catch(error => next(error))
 })
 
 const unknownEndpoint = (request, response, next) => {
