@@ -49,9 +49,18 @@ app.get('/api/tasks', (request, response) => {
 })
 
 app.get('/api/tasks/:id', (request, response) => {
-    Task.findById(request.params.id).then(task => {
-        response.json(task)
-    })
+    Task.findById(request.params.id)
+        .then(task => {
+            if (task) {
+                response.json(task)
+            } else {
+                response.status(404).end()
+            }
+        })
+        .catch(error => {
+            console.log(error)
+            response.status(500).end()
+        })
 })
 
 const generateId = () => {
