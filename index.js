@@ -5,31 +5,7 @@ const app = express()
 app.use(express.json())
 app.use(cors())
 app.use(express.static('build'))
-
-const mongoose = require('mongoose').set('strictQuery', true)
-const password = process.argv[2]
-
-// DO NOT SAVE YOUR PASSWORD ANYWHERE THAT WOULD UPLOAD IT TO GITHUB
-const url = `mongodb+srv://comp227:${password}@cluster0.gb6u3el.mongodb.net/taskApp?retryWrites=true&w=majority`
-// LET ME REPEAT - DO NOT SAVE YOUR PASSWORD IN YOUR CODE!
-
-mongoose.connect(url)
-
-const taskSchema = new mongoose.Schema({
-    content: String,
-    date: Date,
-    important: Boolean,
-})
-
-taskSchema.set('toJSON', {
-    transform: (document, returnedObject) => {
-        returnedObject.id = returnedObject._id.toString()
-        delete returnedObject._id
-        delete returnedObject.__v
-    }
-})
-
-const Task = mongoose.model('Task', taskSchema)
+const Task = require('./models/task')
 
 let tasks = [
     {
