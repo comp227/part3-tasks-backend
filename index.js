@@ -2,9 +2,20 @@ const express = require('express')
 const cors = require('cors')
 const app = express()
 
-app.use(express.json())
-app.use(cors())
 app.use(express.static('build'))
+app.use(express.json())
+
+const requestLogger = (request, response, next) => {
+    console.log('Method:', request.method)
+    console.log('Path:  ', request.path)
+    console.log('Body:  ', request.body)
+    console.log('---')
+    next()
+}
+
+app.use(requestLogger)
+
+app.use(cors())
 const Task = require('./models/task')
 
 let tasks = [
@@ -28,16 +39,6 @@ let tasks = [
     }
 ]
 
-const requestLogger = (request, response, next) => {
-    console.log('Method:', request.method)
-    console.log('Path:  ', request.path)
-    console.log('Body:  ', request.body)
-    console.log('---')
-    next()
-}
-
-app.use(requestLogger)
-
 app.get('/', (request, response) => {
     response.send('<h1>Hello COMP227!</h1>')
 })
@@ -48,7 +49,7 @@ app.get('/api/tasks', (request, response) => {
     })
 })
 
-app.get('/api/tasks/:id', (request, response) => {
+app.get('/api/tasks/:id', (request, response, next) => {
     Task.findById(request.params.id)
         .then(task => {
             if (task) {
@@ -57,10 +58,7 @@ app.get('/api/tasks/:id', (request, response) => {
                 response.status(404).end()
             }
         })
-        .catch(error => {
-            console.log(error)
-            response.status(400).send({ error: 'malformatted id' })
-        })
+        .catch(error => next(error))
 })
 
 const generateId = () => {
@@ -103,6 +101,19 @@ const unknownEndpoint = (request, response, next) => {
 }
 
 app.use(unknownEndpoint)
+
+const errorHandler = (error, request, response, next) => {
+    console.error(error.message)
+
+    if (error.name === 'CastError') {
+        return response.status(400).send({ error: 'malformatted id' })
+    }
+
+    next(error)
+}
+
+// this has to be the last loaded middleware.
+app.use(errorHandler)
 
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
