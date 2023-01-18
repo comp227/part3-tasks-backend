@@ -9,7 +9,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:ui": "rm -rf build && cd ../part2-tasks/ && npm run build && cp -r build ../part3-tasks-backend",
     "deploy": "npm run build:ui && git add . && git commit -m npm_generated_rebuild_of_the_UI && git push",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "fixlint": "eslint . --fix"
   },
   "repository": {
     "type": "git",
