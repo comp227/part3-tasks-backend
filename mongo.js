@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require('mongoose').set('strictQuery', true);
 
 if (process.argv.length < 3) {
     console.log('Please provide the password as an argument: node mongo.js <password>');
@@ -17,7 +17,6 @@ const taskSchema = new mongoose.Schema({
 });
 
 const Task = mongoose.model('Task', taskSchema);
-mongoose.set('strictQuery', true);
 
 mongoose
     .connect(url)
