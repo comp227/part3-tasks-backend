@@ -21,3 +21,13 @@ content-type: application/json
   "name": "Test User",
   "password": "tigers"
 }
+
+###
+POST http://localhost:3001/api/users
+content-type: application/json
+
+{
+  "username": "pacrock",
+  "name": "Khoury Graffiti Rock",
+  "password": "ilikepaint"
+}
