@@ -31,3 +31,23 @@ content-type: application/json
   "name": "Khoury Graffiti Rock",
   "password": "ilikepaint"
 }
+
+###
+POST http://localhost:3001/api/tasks
+content-type: application/json
+
+{
+  "content": "Stay put",
+  "important": "true",
+  "userId": "63c9bcc35a769983693bd0ca"
+}
+
+###
+POST http://localhost:3001/api/tasks
+content-type: application/json
+
+{
+  "content": "Get a paint job",
+  "important": "true",
+  "userId": "63c9bcc35a769983693bd0ca"
+}
