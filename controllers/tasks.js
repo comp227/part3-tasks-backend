@@ -18,20 +18,17 @@ tasksRouter.get('/:id', (request, response, next) => {
         .catch(error => next(error));
 });
 
-tasksRouter.post('/', (request, response, next) => {
+tasksRouter.post('/', async (request, response, next) => {
     const body = request.body;
 
     const task = new Task({
         content: body.content,
         important: body.important || false,
-        date: new Date()
+        date: new Date(),
     });
 
-    task.save()
-        .then(savedTask => {
-            response.status(201).json(savedTask);
-        })
-        .catch(error => next(error));
+    const savedTask = await task.save();
+    response.status(201).json(savedTask);
 });
 
 tasksRouter.delete('/:id', (request, response, next) => {
