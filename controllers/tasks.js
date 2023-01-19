@@ -6,20 +6,16 @@ tasksRouter.get('/', async (request, response) => {
     response.json(tasks);
 });
 
-tasksRouter.get('/:id', async (request, response, next) => {
-    try {
-        const task = await Task.findById(request.params.id);
-        if (task) {
-            response.json(task);
-        } else {
-            response.status(404).end();
-        }
-    } catch(exception) {
-        next(exception);
+tasksRouter.get('/:id', async (request, response) => {
+    const task = await Task.findById(request.params.id);
+    if (task) {
+        response.json(task);
+    } else {
+        response.status(404).end();
     }
 });
 
-tasksRouter.post('/', async (request, response, next) => {
+tasksRouter.post('/', async (request, response) => {
     const body = request.body;
 
     const task = new Task({
@@ -28,22 +24,15 @@ tasksRouter.post('/', async (request, response, next) => {
         date: new Date(),
     });
 
-    try {
-        const savedTask = await task.save();
-        response.status(201).json(savedTask);
-    } catch(exception) {
-        next(exception);
-    }
+    const savedTask = await task.save();
+    response.status(201).json(savedTask);
 });
 
-tasksRouter.delete('/:id', async (request, response, next) => {
-    try {
-        await Task.findByIdAndRemove(request.params.id);
-        response.status(204).end();
-    } catch(exception) {
-        next(exception);
-    }
+tasksRouter.delete('/:id', async (request, response) => {
+    await Task.findByIdAndRemove(request.params.id);
+    response.status(204).end();
 });
+
 tasksRouter.put('/:id', (request, response, next) => {
     const body = request.body;
 
