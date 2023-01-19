@@ -9,11 +9,10 @@ const Task = require('../models/task');
 beforeEach(async () => {
     await Task.deleteMany({});
 
-    let taskObject = new Task(helper.initialTasks[0]); // highlight-line
-    await taskObject.save();
-
-    taskObject = new Task(helper.initialTasks[1]); // highlight-line
-    await taskObject.save();
+    for (let task of helper.initialTasks) {
+        let taskObject = new Task(task);
+        await taskObject.save();
+    }
 });
 
 test('tasks are returned as json', async () => {
