@@ -29,7 +29,7 @@ tasksRouter.post('/', (request, response, next) => {
 
     task.save()
         .then(savedTask => {
-            response.json(savedTask);
+            response.status(201).json(savedTask);
         })
         .catch(error => next(error));
 });
