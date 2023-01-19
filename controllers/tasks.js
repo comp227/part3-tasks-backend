@@ -6,16 +6,17 @@ tasksRouter.get('/', async (request, response) => {
     response.json(tasks);
 });
 
-tasksRouter.get('/:id', (request, response, next) => {
-    Task.findById(request.params.id)
-        .then(task => {
-            if (task) {
-                response.json(task);
-            } else {
-                response.status(404).end();
-            }
-        })
-        .catch(error => next(error));
+tasksRouter.get('/:id', async (request, response, next) => {
+    try {
+        const task = await Task.findById(request.params.id);
+        if (task) {
+            response.json(task);
+        } else {
+            response.status(404).end();
+        }
+    } catch(exception) {
+        next(exception);
+    }
 });
 
 tasksRouter.post('/', async (request, response, next) => {
@@ -27,18 +28,22 @@ tasksRouter.post('/', async (request, response, next) => {
         date: new Date(),
     });
 
-    const savedTask = await task.save();
-    response.status(201).json(savedTask);
+    try {
+        const savedTask = await task.save();
+        response.status(201).json(savedTask);
+    } catch(exception) {
+        next(exception);
+    }
 });
 
-tasksRouter.delete('/:id', (request, response, next) => {
-    Task.findByIdAndRemove(request.params.id)
-        .then(() => {
-            response.status(204).end();
-        })
-        .catch(error => next(error));
+tasksRouter.delete('/:id', async (request, response, next) => {
+    try {
+        await Task.findByIdAndRemove(request.params.id);
+        response.status(204).end();
+    } catch(exception) {
+        next(exception);
+    }
 });
-
 tasksRouter.put('/:id', (request, response, next) => {
     const body = request.body;
 

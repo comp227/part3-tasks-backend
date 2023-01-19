@@ -75,6 +75,40 @@ test('task without content is not added', async () => {
     expect(tasksAtEnd).toHaveLength(helper.initialTasks.length); // highlight-line
 });
 
+test('a specific task can be viewed', async () => {
+    const tasksAtStart = await helper.tasksInDb();
+
+    const taskToView = tasksAtStart[0];
+
+    const resultTask = await api
+        .get(`/api/tasks/${taskToView.id}`)
+        .expect(200)
+        .expect('Content-Type', /application\/json/);
+
+    const processedTaskToView = JSON.parse(JSON.stringify(taskToView));
+
+    expect(resultTask.body).toEqual(processedTaskToView);
+});
+
+test('a task can be deleted', async () => {
+    const tasksAtStart = await helper.tasksInDb();
+    const taskToDelete = tasksAtStart[0];
+
+    await api
+        .delete(`/api/tasks/${taskToDelete.id}`)
+        .expect(204);
+
+    const tasksAtEnd = await helper.tasksInDb();
+
+    expect(tasksAtEnd).toHaveLength(
+        helper.initialTasks.length - 1
+    );
+
+    const contents = tasksAtEnd.map(r => r.content);
+
+    expect(contents).not.toContain(taskToDelete.content);
+});
+
 afterAll(() => {
     mongoose.connection.close();
 });
