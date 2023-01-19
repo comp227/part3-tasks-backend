@@ -1,6 +1,6 @@
 const supertest = require('supertest');
 const mongoose = require('mongoose');
-const helper = require('./test_helper'); // highlight-line
+const helper = require('./test_helper');
 const app = require('../app');
 const api = supertest(app);
 
@@ -8,104 +8,126 @@ const Task = require('../models/task');
 
 beforeEach(async () => {
     await Task.deleteMany({});
-
-    for (let task of helper.initialTasks) {
-        let taskObject = new Task(task);
-        await taskObject.save();
-    }
+    await Task.insertMany(helper.initialTasks);
 });
 
-test('tasks are returned as json', async () => {
-    await api
-        .get('/api/tasks')
-        .expect(200)
-        .expect('Content-Type', /application\/json/);
+describe('when there is initially some tasks saved', () => {
+    test('tasks are returned as json', async () => {
+        await api
+            .get('/api/tasks')
+            .expect(200)
+            .expect('Content-Type', /application\/json/);
+    });
+
+    test('all tasks are returned', async () => {
+        const response = await api.get('/api/tasks');
+
+        expect(response.body).toHaveLength(helper.initialTasks.length);
+    });
+
+    test('a specific task is within the returned tasks', async () => {
+        const response = await api.get('/api/tasks');
+
+        const contents = response.body.map(r => r.content);
+
+        expect(contents).toContain(
+            'Take out the trash'
+        );
+    });
 });
 
-test('all tasks are returned', async () => {
-    const response = await api.get('/api/tasks');
+describe('viewing a specific task', () => {
+    test('succeeds with a valid id', async () => {
+        const tasksAtStart = await helper.tasksInDb();
 
-    expect(response.body).toHaveLength(helper.initialTasks.length); // highlight-line
+        const taskToView = tasksAtStart[0];
+
+        const resultTask = await api
+            .get(`/api/tasks/${taskToView.id}`)
+            .expect(200)
+            .expect('Content-Type', /application\/json/);
+
+        const processedTaskToView = JSON.parse(JSON.stringify(taskToView));
+
+        expect(resultTask.body).toEqual(processedTaskToView);
+    });
+
+    test('fails with statuscode 404 if task does not exist', async () => {
+        const validNonexistingId = await helper.nonExistingId();
+
+        console.log(validNonexistingId);
+
+        await api
+            .get(`/api/tasks/${validNonexistingId}`)
+            .expect(404);
+    });
+
+    test('fails with statuscode 400 if id is invalid', async () => {
+        const invalidId = '5a3d5da59070081a82a3445';
+
+        await api
+            .get(`/api/tasks/${invalidId}`)
+            .expect(400);
+    });
 });
 
-test('a specific task is within the returned tasks', async () => {
-    const response = await api.get('/api/tasks');
+describe('addition of a new task', () => {
+    test('succeeds with valid data', async () => {
+        const newTask = {
+            content: 'async/await simplifies making async calls',
+            important: true,
+        };
 
-    const contents = response.body.map(r => r.content);
+        await api
+            .post('/api/tasks')
+            .send(newTask)
+            .expect(201)
+            .expect('Content-Type', /application\/json/);
 
-    expect(contents).toContain(
-        'Take out the trash'
-    );
+        const tasksAtEnd = await helper.tasksInDb();
+        expect(tasksAtEnd).toHaveLength(helper.initialTasks.length + 1);
+
+        const contents = tasksAtEnd.map(t => t.content);
+        expect(contents).toContain(
+            'async/await simplifies making async calls'
+        );
+    });
+
+    test('fails with status code 400 if data invalid', async () => {
+        const newTask = {
+            important: true
+        };
+
+        await api
+            .post('/api/tasks')
+            .send(newTask)
+            .expect(400);
+
+        const tasksAtEnd = await helper.tasksInDb();
+
+        expect(tasksAtEnd).toHaveLength(helper.initialTasks.length);
+    });
 });
 
-test('a valid task can be added ', async () => {
-    const newTask = {
-        content: 'async/await simplifies making async calls',
-        important: true,
-    };
+describe('deletion of a task', () => {
+    test('succeeds with status code 204 if id is valid', async () => {
+        const tasksAtStart = await helper.tasksInDb();
+        const taskToDelete = tasksAtStart[0];
 
-    await api
-        .post('/api/tasks')
-        .send(newTask)
-        .expect(201)
-        .expect('Content-Type', /application\/json/);
+        await api
+            .delete(`/api/tasks/${taskToDelete.id}`)
+            .expect(204);
 
-    const tasksAtEnd = await helper.tasksInDb(); // highlight-line
-    expect(tasksAtEnd).toHaveLength(helper.initialTasks.length + 1); // highlight-line
+        const tasksAtEnd = await helper.tasksInDb();
 
-    const contents = tasksAtEnd.map(t => t.content); // highlight-line
-    expect(contents).toContain(
-        'async/await simplifies making async calls'
-    );
-});
+        expect(tasksAtEnd).toHaveLength(
+            helper.initialTasks.length - 1
+        );
 
-test('task without content is not added', async () => {
-    const newTask = {
-        important: true
-    };
+        const contents = tasksAtEnd.map(r => r.content);
 
-    await api
-        .post('/api/tasks')
-        .send(newTask)
-        .expect(400);
-
-    const tasksAtEnd = await helper.tasksInDb(); // highlight-line
-
-    expect(tasksAtEnd).toHaveLength(helper.initialTasks.length); // highlight-line
-});
-
-test('a specific task can be viewed', async () => {
-    const tasksAtStart = await helper.tasksInDb();
-
-    const taskToView = tasksAtStart[0];
-
-    const resultTask = await api
-        .get(`/api/tasks/${taskToView.id}`)
-        .expect(200)
-        .expect('Content-Type', /application\/json/);
-
-    const processedTaskToView = JSON.parse(JSON.stringify(taskToView));
-
-    expect(resultTask.body).toEqual(processedTaskToView);
-});
-
-test('a task can be deleted', async () => {
-    const tasksAtStart = await helper.tasksInDb();
-    const taskToDelete = tasksAtStart[0];
-
-    await api
-        .delete(`/api/tasks/${taskToDelete.id}`)
-        .expect(204);
-
-    const tasksAtEnd = await helper.tasksInDb();
-
-    expect(tasksAtEnd).toHaveLength(
-        helper.initialTasks.length - 1
-    );
-
-    const contents = tasksAtEnd.map(r => r.content);
-
-    expect(contents).not.toContain(taskToDelete.content);
+        expect(contents).not.toContain(taskToDelete.content);
+    });
 });
 
 afterAll(() => {
