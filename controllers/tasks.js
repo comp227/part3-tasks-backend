@@ -1,10 +1,9 @@
 const tasksRouter = require('express').Router();
 const Task = require('../models/task');
 
-tasksRouter.get('/', (request, response) => {
-    Task.find({}).then(tasks => {
-        response.json(tasks);
-    });
+tasksRouter.get('/', async (request, response) => {
+    const tasks = await Task.find({});
+    response.json(tasks);
 });
 
 tasksRouter.get('/:id', (request, response, next) => {
