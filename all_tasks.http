@@ -52,7 +52,29 @@ content-type: application/json
   "userId": "63c9bcc35a769983693bd0ca"
 }
 
-###
+### Doing a post request for tasks with a valid token
+POST http://localhost:3001/api/tasks
+content-type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1sdXVrYWkiLCJpZCI6IjYyYjI2N2JiZmY3YzRkNjA5MzAxMjVkYiIsImlhdCI6MTY1NTg3ODI2M30.4I36-2YS6w9aHPShioLw_QYZ6weQJSs3qMblEWosHY4
+
+{
+  "content": "Learn that some tokens don't hurt",
+  "important": "false",
+  "userId": "63c9bcc35a769983693bd0ca"
+}
+
+### Doing a post request for tasks with an invalid token
+POST http://localhost:3001/api/tasks
+content-type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1sdXVrYWkiLCJpZCI6IjYyYjI2N2JiZmY3YzRkNjA5MzAxMjVkYiIsImlhdCI6MTY1NTg3ODI2M30.4I36-2YS6w9aHPShioLw_QYZ6we
+
+{
+  "content": "Learn that some tokens don't hurt",
+  "important": "false",
+  "userId": "63c9bcc35a769983693bd0ca"
+}
+
+### Logging in with a normal account
 POST http://localhost:3001/api/login
 content-type: application/json
 
