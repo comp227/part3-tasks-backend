@@ -51,3 +51,33 @@ content-type: application/json
   "important": "true",
   "userId": "63c9bcc35a769983693bd0ca"
 }
+
+###
+POST http://localhost:3001/api/login
+content-type: application/json
+
+{
+  "username": "pacrock",
+  "password": "ilikepaint"
+}
+
+### Logging in with an incorrect password
+POST http://localhost:3001/api/login
+content-type: application/json
+
+{
+  "username": "pacrock",
+  "password": "my password?"
+}
+
+
+
+
+
+
+
+
+
+
+
+
