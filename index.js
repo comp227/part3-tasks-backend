@@ -44,7 +44,7 @@ app.get('/api/tasks', (request, response) => {
 
 app.get('/api/tasks/:id', (request, response) => {
     const id = Number(request.params.id)
-    const task = tasks.find(task => task.id === id);
+    const task = tasks.find(task => task.id === id)
     if (task) {
         response.json(task)
     } else {
@@ -71,7 +71,7 @@ app.post('/api/tasks', (request, response) => {
     const task = {
         id: generateId(),
         content: body.content,
-        important: body.important || false,
+        important: Boolean(body.important) || false,
         date: new Date().toISOString(),
     }
 
