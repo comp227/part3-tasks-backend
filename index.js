@@ -72,7 +72,7 @@ app.post('/api/tasks', (request, response) => {
 
     const task = new Task({
         content: body.content,
-        important: body.important || false,
+        important: Boolean(body.important) || false,
         date: new Date(),
     })
 
