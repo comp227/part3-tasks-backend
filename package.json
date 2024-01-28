@@ -1,30 +1,22 @@
 {
-  "name": "backend",
-  "version": "0.0.1",
+  "name": "backend-reading",
+  "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build:ui": "rm -rf build && cd ../part2-tasks/ && npm run build && cp -r build ../part3-tasks-backend",
-    "deploy": "npm run build:ui && git add . && git commit -m npm_generated_rebuild_of_the_UI && git push"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/comp227/part3-tasks-backend.git"
+    "build:ui": "rm -rf dist && cd ../reading/ && npm run build && cp -r dist ../backend-reading",
+    "deploy": "npm run build:ui && git add . && git commit -m npm_generated_rebuild_of_the_UI && git push",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Osvaldo Jiménez",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/comp227/part3-tasks-backend/issues"
-  },
-  "homepage": "https://github.com/comp227/part3-tasks-backend#readme",
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.18.2"
   },
   "devDependencies": {
-    "nodemon": "^2.0.20"
+    "nodemon": "^3.0.3"
   }
 }

@@ -1,10 +1,10 @@
 const express = require('express')
-const cors = require('cors')
 const app = express()
+const cors = require('cors')
 
-app.use(express.json())
 app.use(cors())
-app.use(express.static('build'))
+app.use(express.json())
+app.use(express.static('dist'))
 
 let tasks = [
     {
@@ -77,7 +77,7 @@ app.post('/api/tasks', (request, response) => {
         important: Boolean(body.important) || false,
         date: new Date().toISOString(),
     }
-
+    console.log('task(' + typeof task + ') =', task, ' | index.js:67 - ')
     tasks = tasks.concat(task)
 
     response.json(task)
@@ -97,7 +97,7 @@ const unknownEndpoint = (request, response, next) => {
 
 app.use(unknownEndpoint)
 
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT || 3001  // highlight-line
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
 })
