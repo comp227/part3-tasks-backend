@@ -1,32 +1,15 @@
+require('dotenv').config()
 const express = require('express')
-const cors = require('cors')
 const app = express()
+const cors = require('cors')
 
-app.use(express.json())
 app.use(cors())
-app.use(express.static('build'))
+app.use(express.json())
+app.use(express.static('dist'))
+
 const Task = require('./models/task')
 
-let tasks = [
-    {
-        id: 1,
-        content: "Wash the dishes",
-        date: "2023-01-10T17:30:31.098Z",
-        important: true
-    },
-    {
-        id: 2,
-        content: "Take out the trash",
-        date: "2023-01-10T18:39:34.091Z",
-        important: false
-    },
-    {
-        id: 3,
-        content: "Buy salty snacks",
-        date: "2023-01-10T19:20:14.298Z",
-        important: true
-    }
-]
+let tasks = []
 
 const requestLogger = (request, response, next) => {
     console.log('Method:', request.method)
@@ -64,16 +47,14 @@ const generateId = () => {
 app.post('/api/tasks', (request, response) => {
     const body = request.body
 
-    if (!body.content) {
-        return response.status(400).json({
-            error: 'content missing'
-        })
+    if (body.content === undefined) {
+        return response.status(400).json({ error: 'content missing' })
     }
 
     const task = new Task({
         content: body.content,
         important: Boolean(body.important) || false,
-        date: new Date(),
+        date: new Date().toISOString(),
     })
 
     task.save().then(savedTask => {
@@ -95,7 +76,7 @@ const unknownEndpoint = (request, response, next) => {
 
 app.use(unknownEndpoint)
 
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
 })
