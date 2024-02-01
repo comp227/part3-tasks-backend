@@ -1,9 +1,13 @@
+require('dotenv').config()
 const express = require('express')
-const cors = require('cors')
 const app = express()
+const cors = require('cors')
 
-app.use(express.static('build'))
+const Task = require('./models/task')
+
+app.use(express.static('dist'))
 app.use(express.json())
+app.use(cors())
 
 const requestLogger = (request, response, next) => {
     console.log('Method:', request.method)
@@ -14,9 +18,6 @@ const requestLogger = (request, response, next) => {
 }
 
 app.use(requestLogger)
-
-app.use(cors())
-const Task = require('./models/task')
 
 app.get('/', (request, response) => {
     response.send('<h1>Hello COMP227!</h1>')
@@ -46,12 +47,20 @@ app.post('/api/tasks', (request, response, next) => {
     const task = new Task({
         content: body.content,
         important: Boolean(body.important) || false,
-        date: new Date(),
+        date: new Date().toISOString(),
     })
 
     task.save()
         .then(savedTask => {
             response.json(savedTask)
+        })
+        .catch(error => next(error))
+})
+
+app.delete('/api/tasks/:id', (request, response, next) => {
+    Task.findByIdAndDelete(request.params.id)
+        .then(result => {
+            response.status(204).end()
         })
         .catch(error => next(error))
 })
@@ -70,19 +79,11 @@ app.put('/api/tasks/:id', (request, response, next) => {
         .catch(error => next(error))
 })
 
-app.delete('/api/tasks/:id', (request, response, next) => {
-    Task.findByIdAndRemove(request.params.id)
-        .then(result => {
-            response.status(204).end()
-        })
-        .catch(error => next(error))
-})
-
-const unknownEndpoint = (request, response, next) => {
+const unknownEndpoint = (request, response) => {
     response.status(404).send({ error: 'unknown endpoint' })
-    next()
 }
 
+// handler of requests with unknown endpoint
 app.use(unknownEndpoint)
 
 const errorHandler = (error, request, response, next) => {
@@ -97,7 +98,6 @@ const errorHandler = (error, request, response, next) => {
     next(error)
 }
 
-// this has to be the last loaded middleware.
 app.use(errorHandler)
 
 const PORT = process.env.PORT || 3001
