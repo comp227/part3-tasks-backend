@@ -1,28 +1,33 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose").set("strictQuery", true);
 
 if (process.argv.length < 3) {
-    console.log('Please provide the password as an argument: node mongo.js <password>');
+    console.log("give password as an argument");
     process.exit(1);
 }
 
-// eslint-disable-next-line no-undef
 const password = process.argv[2];
 
-const url = `mongodb+srv://comp227:${password}@cluster0.gb6u3el.mongodb.net/taskApp?retryWrites=true&w=majority`;
+const url = `mongodb+srv://comp227:${password}@cluster0.gb6u3el.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 
 const taskSchema = new mongoose.Schema({
-    content: String,
-    date: Date,
+    content: {
+        type: String,
+        minLength: 5,
+        required: true
+    },
+    date: {
+        type: Date,
+        required: true
+    },
     important: Boolean,
 });
 
-const Task = mongoose.model('Task', taskSchema);
-mongoose.set('strictQuery', true);
+const Task = mongoose.model("Task", taskSchema);
 
 mongoose
     .connect(url)
-    .then(() => {
-        console.log('connected');
+    .then((result) => {
+        console.log("connected");
 
         Task.find({}).then(result => {
             result.forEach(task => {
