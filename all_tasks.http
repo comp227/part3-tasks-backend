@@ -8,3 +8,6 @@ content-type: application/json
   "content": "Investigate the WebStorm REST client further",
   "important": false
 }
+
+###
+GET http://localhost:3001/api/tasks/someInvalidId
