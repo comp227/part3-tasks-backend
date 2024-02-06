@@ -1,11 +1,11 @@
 const reverse = (string) => {
     return string
-        .split('')
+        .split("")
         .reverse()
-        .join('');
+        .join("");
 };
 
-const average = array => {
+const average = (array) => {
     const reducer = (sum, item) => {
         return sum + item;
     };
