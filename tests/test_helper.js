@@ -1,23 +1,23 @@
-const Task = require('../models/task');
-const User = require('../models/user');
+const Task = require("../models/task");
+const User = require("../models/user");
 
 const initialTasks = [
     {
-        content: 'Wash the dishes',
+        content: "Wash the dishes",
         date: new Date(),
         important: false
     },
     {
-        content: 'Take out the trash',
+        content: "Take out the trash",
         date: new Date(),
         important: true
     }
 ];
 
 const nonExistingId = async () => {
-    const task = new Task({ content: 'willremovethissoon', date: new Date() });
+    const task = new Task({ content: "willremovethissoon", date: new Date() });
     await task.save();
-    await task.remove();
+    await task.deleteOne();
 
     return task._id.toString();
 };
@@ -33,5 +33,8 @@ const usersInDb = async () => {
 };
 
 module.exports = {
-    initialTasks, nonExistingId, tasksInDb, usersInDb
+    initialTasks,
+    nonExistingId,
+    tasksInDb,
+    usersInDb,
 };
