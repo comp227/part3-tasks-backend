@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const taskSchema = new mongoose.Schema({
     content: {
@@ -13,11 +13,11 @@ const taskSchema = new mongoose.Schema({
     important: Boolean,
     user: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
-    },
+        ref: "User"
+    }
 });
 
-taskSchema.set('toJSON', {
+taskSchema.set("toJSON", {
     transform: (document, returnedObject) => {
         returnedObject.id = returnedObject._id.toString();
         delete returnedObject._id;
@@ -25,4 +25,4 @@ taskSchema.set('toJSON', {
     }
 });
 
-module.exports = mongoose.model('Task', taskSchema);
+module.exports = mongoose.model("Task", taskSchema);
